@@ -1,18 +1,25 @@
-import {Link} from "react-router-dom";
+import {Link, useSearchParams} from "react-router-dom";
 import {IFilm} from "@/pages/Film";
-import {ChangeEvent, useCallback, useState} from "react";
+import {ChangeEvent, useCallback, useEffect, useState} from "react";
 import useDebounce from "@/helpers/useDebounce";
 import {useQuery} from '@tanstack/react-query'
 import {Search} from "@/modules/Search";
+import {Pagination} from "@/modules/Pagination";
 
 interface IData {
     docs: IFilm[]
+    page: number;
+    pages: number;
 }
 
-function fetchFilms(query:string): Promise<IData> {
-    return fetch('https://api.kinopoisk.dev/v1.4/movie/search?page=1&limit=10&' + new URLSearchParams({
-        query,
-    }), {
+function fetchFilms(query:string, page: number, limit = 10): Promise<IData> {
+    let url = `https://api.kinopoisk.dev/v1.4/movie/search?page=${page}&limit=${limit}`;
+
+    if (query) {
+        url = url + '&' + new URLSearchParams({query})
+    }
+
+    return fetch(url, {
         headers: {
             'X-API-KEY': process.env.TOKEN
         }
@@ -20,15 +27,50 @@ function fetchFilms(query:string): Promise<IData> {
 }
 
 export default function Films () {
-    const [value, setValue] = useState('');
+    const [isInit, setIsInit] = useState(true);
+
+    /* */
+    const [searchParams, setSearchParams] = useSearchParams();
+
+    const pageFromUrl = Number(searchParams.get('page'));
+    /* */
+
+    /* search */
+    const [value, setValue] = useState(searchParams.has('query') ? searchParams.get('query') : '');
 
     const debouncedValue = useDebounce(value, 1000);
 
+    //resets page on search value change and doesn't reset on first page load
+    useEffect(() => {
+        if (!isInit) {
+            setSearchParams((prev) => {
+                const newUrl = new URLSearchParams();
+
+                if (prev.has('page')) {
+                    newUrl.set('page', '1');
+                }
+
+                if (debouncedValue) {
+                    newUrl.set('query', debouncedValue);
+                }
+
+                if (prev.has('limit')) {
+                    newUrl.set('limit', prev.get('limit'))
+                }
+
+                return newUrl;
+            })
+        } else {
+            setIsInit(false)
+        }
+    }, [debouncedValue])
+    /* end search */
+
     //@ts-ignore
-    const {data, isSuccess, isLoading, error} = useQuery<IData, string>(
+    const {data, isLoading, isSuccess, error} = useQuery<IData, string>(
         {
-            queryKey: ['films', debouncedValue],
-            queryFn: () => fetchFilms(debouncedValue)
+            queryKey: ['films', debouncedValue, pageFromUrl],
+            queryFn: () => fetchFilms(debouncedValue, pageFromUrl > 0 ? pageFromUrl : 1)
         }
     );
 
@@ -45,17 +87,25 @@ export default function Films () {
             {isLoading && <div>Loading...</div>}
 
             {isSuccess && data && (
-                <div>
-                    {data.docs.length > 1 ? data.docs.map(film => (
-                        <Link to={`/films/${film.id}`} key={film.id}>
+                <>
+                    {data.docs?.length > 0 ? (
+                        <div>
                             <div>
-                                <strong>{film.name}</strong>
+                                {data.docs.map(film => (
+                                    <Link to={`/films/${film.id}`} key={film.id}>
+                                        <div>
+                                            <strong>{film.name}</strong>
+                                        </div>
+                                    </Link>
+                                ))}
                             </div>
-                        </Link>
-                    )) : (
+
+                            <Pagination total={data.pages} current={data.page} />
+                        </div>
+                    ) : (
                         <div>Ничего не найдено</div>
                     )}
-                </div>
+                </>
             )}
         </section>
     )
