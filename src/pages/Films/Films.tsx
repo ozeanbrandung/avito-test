@@ -35,6 +35,24 @@ export default function Films () {
     const pageFromUrl = Number(searchParams.get('page'));
     /* */
 
+    /* pagination */
+    const handlePageClick = useCallback((pageNum: number) => () => {
+        setSearchParams(prev => {
+            const newUrl = new URLSearchParams();
+
+            newUrl.set('page', pageNum.toString());
+
+            prev.forEach((value, key) => {
+                if (key !== 'page') {
+                    newUrl.set(key, value);
+                }
+            })
+
+            return newUrl;
+        })
+    }, [])
+    /* end pagination */
+
     /* search */
     const [value, setValue] = useState(searchParams.has('query') ? searchParams.get('query') : '');
 
@@ -100,7 +118,7 @@ export default function Films () {
                                 ))}
                             </div>
 
-                            <Pagination total={data.pages} current={data.page} />
+                            <Pagination total={data.pages} current={data.page} handleClick={handlePageClick}/>
                         </div>
                     ) : (
                         <div>Ничего не найдено</div>

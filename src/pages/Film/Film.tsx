@@ -1,5 +1,8 @@
 import {Link, useParams} from "react-router-dom";
 import {useQuery} from '@tanstack/react-query';
+import {Reviews} from "@/modules/Reviews";
+import {Actors} from "@/modules/Actors";
+import {Seasons} from "@/modules/Seasons";
 
 export interface IFilm {
     id: number;
@@ -7,6 +10,13 @@ export interface IFilm {
     name: string;
     ageRating: number;
     countries: {name: string}[]
+    description: string;
+    seasonsInfo: any[];
+    //type: 'tv-series' | 'movie' | 'animated-series'
+    rating: {
+        kp: number;
+        imdb: number
+    }
 }
 
 function fetchFilm(id: string) {
@@ -36,6 +46,15 @@ export default function Film () {
                     <Link to={'/films'}>К поиску</Link>
                     <h1>{data.name}</h1>
 
+                    <p>
+                        {data.description}
+                    </p>
+
+                    <div>
+                        <p>KP: {data.rating.kp}</p>
+                        <p>IMDB: {data.rating.imdb}</p>
+                    </div>
+
                     <div>
                         Год: <strong>{data.year}</strong>
                     </div>
@@ -43,6 +62,14 @@ export default function Film () {
                     <div>Возрастной рейтинг: <em>{`${data.ageRating}+`}</em></div>
 
                     <div>Страны: {data.countries.map((item, idx) => <div key={idx}>{item.name}</div>)}</div>
+
+                    <Actors movieId={data.id} />
+
+                    {data.seasonsInfo.length > 0 && (
+                        <Seasons movieId={data.id} />
+                    )}
+
+                    <Reviews movieId={data.id} />
                 </>
             )}
         </article>
