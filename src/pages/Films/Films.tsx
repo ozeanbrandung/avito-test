@@ -1,6 +1,6 @@
 import {Link, useSearchParams} from "react-router-dom";
 import {IFilm} from "@/pages/Film";
-import {ChangeEvent, useCallback, useEffect, useState} from "react";
+import {ChangeEvent, MouseEvent, useCallback, useEffect, useState} from "react";
 import useDebounce from "@/helpers/useDebounce";
 import {useQuery} from '@tanstack/react-query'
 import {Search} from "@/modules/Search";
@@ -12,7 +12,13 @@ interface IData {
     pages: number;
 }
 
-function fetchFilms(query:string, page: number, limit = 10): Promise<IData> {
+export enum LimitOptions {
+    Ten = '10',
+    Twenty = '20',
+    Fifty = '50',
+}
+
+function fetchFilms(query:string, page: number, limit:LimitOptions | string): Promise<IData> {
     let url = `https://api.kinopoisk.dev/v1.4/movie/search?page=${page}&limit=${limit}`;
 
     if (query) {
@@ -84,11 +90,34 @@ export default function Films () {
     }, [debouncedValue])
     /* end search */
 
+    /* limit */
+    const [limit, setLimit] = useState(searchParams.has('limit') ? searchParams.get('limit') : LimitOptions.Ten);
+
+    const handleChangeLimit = useCallback((newLimit: LimitOptions) => (e: MouseEvent) => {
+        setLimit(newLimit)
+        setSearchParams((prev) => {
+            const newUrl = new URLSearchParams();
+
+            prev.forEach((value, key) => {
+                newUrl.set(key, value)
+            })
+
+            newUrl.set('limit', newLimit.toString())
+
+            return newUrl
+        })
+    }, [])
+    /* end limit*/
+
     //@ts-ignore
     const {data, isLoading, isSuccess, error} = useQuery<IData, string>(
         {
-            queryKey: ['films', debouncedValue, pageFromUrl],
-            queryFn: () => fetchFilms(debouncedValue, pageFromUrl > 0 ? pageFromUrl : 1)
+            queryKey: ['films', debouncedValue, pageFromUrl, limit],
+            queryFn: () => fetchFilms(
+                debouncedValue,
+                pageFromUrl > 0 ? pageFromUrl : 1,
+                limit
+            )
         }
     );
 
@@ -101,6 +130,18 @@ export default function Films () {
             <h1>Films</h1>
 
             <Search value={value} handleChange={handleChange} />
+
+            <select>
+                <option selected={limit === LimitOptions.Ten} onClick={handleChangeLimit(LimitOptions.Ten)}>
+                    {LimitOptions.Ten}
+                </option>
+                <option selected={limit === LimitOptions.Twenty} onClick={handleChangeLimit(LimitOptions.Twenty)}>
+                    {LimitOptions.Twenty}
+                </option>
+                <option selected={limit === LimitOptions.Fifty} onClick={handleChangeLimit(LimitOptions.Fifty)}>
+                    {LimitOptions.Fifty}
+                </option>
+            </select>
 
             {isLoading && <div>Loading...</div>}
 
