@@ -1,5 +1,15 @@
+.pagination {
+  display: flex;
+  column-gap: 10px;
+  align-items: center;
+  justify-content: center;
+}
+
 .pageBtn {
-  padding: 8px;
-  border: 1px solid black;
-  display: inline-block;
+  transition: color 0.3s ease, background-color 0.3s ease;
+
+  &.selected {
+    background-color: #36395A;
+    color: white;
+  }
 }

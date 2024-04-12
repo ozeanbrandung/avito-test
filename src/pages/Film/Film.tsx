@@ -39,29 +39,31 @@ export default function Film () {
     );
 
     return (
-        <article>
+        <section>
             {isLoading && <div>Loading...</div>}
             {isSuccess && data && (
                 <>
                     <Link to={'/films'}>К поиску</Link>
-                    <h1>{data.name}</h1>
+                    <article>
+                        <h1>{data.name}</h1>
 
-                    <p>
-                        {data.description}
-                    </p>
+                        <p>
+                            {data.description}
+                        </p>
 
-                    <div>
-                        <p>KP: {data.rating.kp}</p>
-                        <p>IMDB: {data.rating.imdb}</p>
-                    </div>
+                        <div>
+                            <p>KP: {data.rating.kp}</p>
+                            <p>IMDB: {data.rating.imdb}</p>
+                        </div>
 
-                    <div>
-                        Год: <strong>{data.year}</strong>
-                    </div>
+                        <div>
+                            Год: <strong>{data.year}</strong>
+                        </div>
 
-                    <div>Возрастной рейтинг: <em>{`${data.ageRating}+`}</em></div>
+                        <div>Возрастной рейтинг: <em>{`${data.ageRating}+`}</em></div>
 
-                    <div>Страны: {data.countries.map((item, idx) => <div key={idx}>{item.name}</div>)}</div>
+                        <div>Страны: {data.countries.map((item, idx) => <div key={idx}>{item.name}</div>)}</div>
+                    </article>
 
                     <Actors movieId={data.id} />
 
@@ -72,6 +74,6 @@ export default function Film () {
                     <Reviews movieId={data.id} />
                 </>
             )}
-        </article>
+        </section>
     )
 }

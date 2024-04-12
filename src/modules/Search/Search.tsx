@@ -1,4 +1,5 @@
 import {ChangeEvent, memo} from "react";
+import styles from './Search.module.scss';
 
 interface IProps {
     value: string;
@@ -8,6 +9,7 @@ interface IProps {
 export const Search = memo(({value, handleChange}: IProps) => {
     return (
         <input
+            className={styles.input}
             type='search'
             value={value}
             onChange={handleChange}

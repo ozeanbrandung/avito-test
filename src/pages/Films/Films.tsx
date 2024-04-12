@@ -5,6 +5,7 @@ import useDebounce from "@/helpers/useDebounce";
 import {useQuery} from '@tanstack/react-query'
 import {Search} from "@/modules/Search";
 import {Pagination} from "@/modules/Pagination";
+import styles from './Films.module.scss';
 
 interface IData {
     docs: IFilm[]
@@ -127,29 +128,31 @@ export default function Films () {
 
     return (
         <section>
-            <h1>Films</h1>
+            <h1 className={styles.title}>Искать фильмы!</h1>
 
-            <Search value={value} handleChange={handleChange} />
+            <div className={styles.filtersGroup}>
+                <Search value={value} handleChange={handleChange} />
 
-            <select>
-                <option selected={limit === LimitOptions.Ten} onClick={handleChangeLimit(LimitOptions.Ten)}>
-                    {LimitOptions.Ten}
-                </option>
-                <option selected={limit === LimitOptions.Twenty} onClick={handleChangeLimit(LimitOptions.Twenty)}>
-                    {LimitOptions.Twenty}
-                </option>
-                <option selected={limit === LimitOptions.Fifty} onClick={handleChangeLimit(LimitOptions.Fifty)}>
-                    {LimitOptions.Fifty}
-                </option>
-            </select>
+                <select>
+                    <option selected={limit === LimitOptions.Ten} onClick={handleChangeLimit(LimitOptions.Ten)}>
+                        {LimitOptions.Ten}
+                    </option>
+                    <option selected={limit === LimitOptions.Twenty} onClick={handleChangeLimit(LimitOptions.Twenty)}>
+                        {LimitOptions.Twenty}
+                    </option>
+                    <option selected={limit === LimitOptions.Fifty} onClick={handleChangeLimit(LimitOptions.Fifty)}>
+                        {LimitOptions.Fifty}
+                    </option>
+                </select>
+            </div>
 
-            {isLoading && <div>Loading...</div>}
+            {isLoading && <div className={styles.content}>Loading...</div>}
 
             {isSuccess && data && (
                 <>
                     {data.docs?.length > 0 ? (
-                        <div>
-                            <div>
+                        <>
+                            <div className={styles.content}>
                                 {data.docs.map(film => (
                                     <Link to={`/films/${film.id}`} key={film.id}>
                                         <div>
@@ -159,10 +162,10 @@ export default function Films () {
                                 ))}
                             </div>
 
-                            <Pagination total={data.pages} current={data.page} handleClick={handlePageClick}/>
-                        </div>
+                            <Pagination total={data.pages} current={data.page} handleClick={handlePageClick} className={styles.content}/>
+                        </>
                     ) : (
-                        <div>Ничего не найдено</div>
+                        <div className={styles.content}>Ничего не найдено</div>
                     )}
                 </>
             )}

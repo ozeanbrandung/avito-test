@@ -1,0 +1,23 @@
+:root {
+  --filterWidth: 600px;
+  --filtersColumnGap: 20px;
+  --filterSelect: 40px;
+  --filtersGroupWidth: calc(var(--filterWidth) + var(--filtersColumnGap) + var(--filterSelect))
+}
+
+body {
+  font-family: "JetBrains Mono",monospace;
+}
+
+a {
+  text-decoration: none;
+
+  &:hover,
+  &:focus {
+    text-decoration: underline;
+  }
+}
+
+section {
+  padding: 40px 20px 80px;
+}
