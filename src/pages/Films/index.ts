@@ -1,3 +1,1 @@
-import {FilmsLazy} from "@/pages/Films/Films.lazy";
-
-export default FilmsLazy;
+export {FilmsLazy as Films} from './Films.lazy';

@@ -1,3 +1,3 @@
 import {lazy} from "react";
 
-export const LazyFilm = lazy(() => import('./Film'))
+export const FilmLazy = lazy(() => import('./Film'))

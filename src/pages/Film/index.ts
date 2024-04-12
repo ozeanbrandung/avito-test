@@ -1,3 +1,2 @@
-import {LazyFilm} from "./Film.lazy";
-
-export default LazyFilm;
+export {FilmLazy as Film} from './Film.lazy';
+export {IFilm} from './Film';

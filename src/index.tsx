@@ -1,9 +1,8 @@
 import {createRoot} from "react-dom/client";
-import {App} from "@/components/App";
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
-import Film from "@/pages/Film";
-import {StrictMode, Suspense} from "react";
+import {StrictMode} from "react";
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
+import {routerConfig} from "@/router/config";
 
 const root = document.getElementById('root');
 
@@ -13,26 +12,7 @@ const root = document.getElementById('root');
 
  const container = createRoot(root);
 
-const router = createBrowserRouter([
-    {
-        path: "/",
-        element: <App />,
-        children: [
-            // {
-            //     path: '/films',
-            //     element: <Suspense fallback={'Loading...'}>
-            //         <Films />
-            //     </Suspense>
-            // },
-            {
-                path: '/films/:filmId',
-                element: <Suspense fallback={'Loading...'}>
-                    <Film />
-                </Suspense>
-            }
-        ]
-    },
-]);
+const router = createBrowserRouter(routerConfig);
 
 const queryClient = new QueryClient(/*{defaultOptions: {queries: {}}}*/)
 
