@@ -1,0 +1,39 @@
+.review {
+  border-radius: 30px;
+  padding: 60px 40px;
+
+  &:not(:last-child) {
+    margin-bottom: var(--margin-bottom-block)
+  }
+
+  &.positive {
+    background-color: palegreen;
+  }
+
+  &.neutral {
+    background-color: palegoldenrod;
+  }
+
+  &.negative {
+    background-color: pink;
+  }
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.author {
+  text-align: right;
+}
+
+.title {
+  font-size: 20px;
+}
+
+.content {
+  max-width: 1000px;
+  margin: 0 auto var(--margin-bottom-block);
+}

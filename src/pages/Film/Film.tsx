@@ -1,9 +1,10 @@
-import {Link, useParams} from "react-router-dom";
+import {Link, useNavigate, useParams} from "react-router-dom";
 import {useQuery} from '@tanstack/react-query';
 import {Reviews} from "@/modules/Reviews";
 import {Actors} from "@/modules/Actors";
 import {Seasons} from "@/modules/Seasons";
-import styles from "@/pages/Films/Films.module.scss";
+import styles from "./Film.module.scss";
+import {Button} from "@/ui";
 
 export interface IFilm {
     id: number;
@@ -18,6 +19,16 @@ export interface IFilm {
         kp: number;
         imdb: number
     }
+    poster: {
+        url: string;
+    }
+    similarMovies: {
+        id: number;
+        name: string;
+        poster: {
+            url: string;
+        }
+    }[]
 }
 
 function fetchFilm(id: string) {
@@ -39,6 +50,16 @@ export default function Film () {
         }
     );
 
+    const handleClickBack = () => {
+        if (history.length > 0) {
+            history.back();
+        } else {
+            history.pushState(undefined, undefined, "/films");
+        }
+    }
+
+    const backBtnTitle = history.length > 0 ? 'Назад' : 'К поиску';
+
     return (
         <section>
             {isLoading && <div className={styles.content}>Loading...</div>}
@@ -47,26 +68,41 @@ export default function Film () {
 
             {isSuccess && data && (
                 <>
-                    <Link to={'/films'}>К поиску</Link>
-                    <article>
-                        <h1>{data.name}</h1>
+                    <Button onClick={handleClickBack}>{backBtnTitle}</Button>
 
-                        <p>
-                            {data.description}
-                        </p>
+                    <article className={styles.content}>
+                        <h1 className={styles.title}>{data.name}</h1>
 
-                        <div>
-                            <p>KP: {data.rating.kp}</p>
-                            <p>IMDB: {data.rating.imdb}</p>
+                        <div className={styles.description}>
+                            <div className={styles.right}>
+                                <p className={styles.block}>
+                                    {data.description}
+                                </p>
+
+                                <p className={styles.block}>
+                                    Год: <strong>{data.year}</strong>
+                                </p>
+
+                                {data.ageRating && (
+                                    <p className={styles.block}>Возрастной рейтинг: <em>{`${data.ageRating}+`}</em></p>
+                                )}
+
+                                <p className={`${styles.block} ${styles.countries}`}>
+                                    Страны: {data.countries.map((item, idx) =>
+                                        <span key={idx}>{item.name}</span>
+                                    )}
+                                </p>
+
+                                <div className={styles.ratingBlock}>
+                                    <span>KP: {data.rating.kp}</span>
+                                    <span>IMDB: {data.rating.imdb}</span>
+                                </div>
+                            </div>
+
+                            <div className={styles.img}>
+                                <img src={data.poster.url} alt=""/>
+                            </div>
                         </div>
-
-                        <div>
-                            Год: <strong>{data.year}</strong>
-                        </div>
-
-                        <div>Возрастной рейтинг: <em>{`${data.ageRating}+`}</em></div>
-
-                        <div>Страны: {data.countries.map((item, idx) => <div key={idx}>{item.name}</div>)}</div>
                     </article>
 
                     <Actors movieId={data.id} />

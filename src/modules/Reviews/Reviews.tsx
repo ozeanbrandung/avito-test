@@ -1,6 +1,7 @@
 import {Pagination} from "@/modules/Pagination";
 import {useQuery} from "@tanstack/react-query";
 import {useCallback, useState} from "react";
+import styles from './Reviews.module.scss'
 
 //TODO: make it dynamic
 interface IData {
@@ -50,14 +51,24 @@ export const Reviews = ({movieId}: {movieId: number}) => {
                 <>
                 {data.docs?.length > 0 ? (
                     <div>
-                        <div>
+                        <div className={styles.content}>
                             {data.docs.map(review => (
-                                    <div>
-                                        <p>{review.title}</p>
+                                    <article
+                                        className={`
+                                            ${styles.review}
+                                            ${review.type === 'Позитивный' ? styles.positive : ''}
+                                            ${review.type === 'Негативный' ? styles.negative : ''}
+                                            ${review.type === 'Нейтральный' ? styles.neutral : ''}
+                                        `}
+                                        //className={styles.review}
+                                    >
+                                        <div className={styles.header}>
+                                            <p className={styles.title}>{review.title}</p>
+                                            <p><strong>{review.type}</strong></p>
+                                        </div>
                                         <p>{review.review}</p>
-                                        <p>{review.author}</p>
-                                        <p>{review.type}</p>
-                                    </div>
+                                        <p className={styles.author}><em>{review.author}</em></p>
+                                    </article>
                             ))}
                         </div>
 
@@ -68,7 +79,7 @@ export const Reviews = ({movieId}: {movieId: number}) => {
                         />
                     </div>
                 ) : (
-                    <div>Нет отзывов на этот фильм</div>
+                    <div className={styles.content}>Нет отзывов на этот фильм</div>
                 )}
                 </>
             )}

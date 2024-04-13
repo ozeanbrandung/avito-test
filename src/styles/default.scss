@@ -2,7 +2,9 @@
   --filterWidth: 600px;
   --filtersColumnGap: 20px;
   --filterSelect: 40px;
-  --filtersGroupWidth: calc(var(--filterWidth) + var(--filtersColumnGap) + var(--filterSelect))
+  --filtersGroupWidth: calc(var(--filterWidth) + var(--filtersColumnGap) + var(--filterSelect));
+  --margin-bottom-title: 80px;
+  --margin-bottom-block: 40px;
 }
 
 body {
@@ -20,4 +22,8 @@ a {
 
 section {
   padding: 40px 20px 80px;
+}
+
+p {
+  margin: 0 0 1.5em;
 }
