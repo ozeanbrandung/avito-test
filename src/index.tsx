@@ -4,7 +4,7 @@ import {StrictMode} from "react";
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
 import {routerConfig} from "@/router/config";
 import './styles/reset.scss';
-import './styles/default.scss'
+import './styles/default.scss';
 
 const root = document.getElementById('root');
 

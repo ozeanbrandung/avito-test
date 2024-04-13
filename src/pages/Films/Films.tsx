@@ -179,7 +179,7 @@ export default function Films () {
                                 {data.docs.map(film => (
                                     <Link to={`/films/${film.id}`} key={film.id}>
                                         <div>
-                                            <strong>{film.name}</strong>
+                                            <strong>{film.name} ({film.year})</strong>
                                         </div>
                                     </Link>
                                 ))}

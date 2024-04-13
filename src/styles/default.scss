@@ -3,8 +3,9 @@
   --filtersColumnGap: 20px;
   --filterSelect: 40px;
   --filtersGroupWidth: calc(var(--filterWidth) + var(--filtersColumnGap) + var(--filterSelect));
-  --margin-bottom-title: 80px;
-  --margin-bottom-block: 40px;
+  --margin-bottom-l: 80px;
+  --margin-bottom-m: 60px;
+  --margin-bottom-s: 40px;
 }
 
 body {
@@ -26,4 +27,8 @@ section {
 
 p {
   margin: 0 0 1.5em;
+
+  &:last-child {
+    margin: 0;
+  }
 }

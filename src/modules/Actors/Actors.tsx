@@ -1,6 +1,8 @@
 import {Pagination} from "@/modules/Pagination";
 import {useQuery} from "@tanstack/react-query";
 import {useCallback, useState} from "react";
+import noPhoto from '@/assets/img/no-photo.png'
+import styles from './Actors.module.scss';
 
 //TODO: make it dynamic
 interface IData {
@@ -30,7 +32,7 @@ export const Actors = ({movieId}: {movieId: number}) => {
     const [page, setPage] = useState(1);
 
     //@ts-ignore
-    const {data, isLoading, isSuccess, error} = useQuery<IData, string>(
+    const {data, isLoading, isSuccess, error} = useQuery<IData, Error>(
         {
             queryKey: ['actors', page],
             queryFn: () => fetchActors(page, movieId)
@@ -43,19 +45,25 @@ export const Actors = ({movieId}: {movieId: number}) => {
     )
 
     return (
-        <div>
+        <div className={styles.block}>
+            <h2 className={styles.title}>Актеры</h2>
+
             {isLoading && <div>Loading...</div>}
+
+            {error && <div>{error.message}</div>}
 
             {isSuccess && data && (
                 <>
                     {data.docs?.length > 0 ? (
                         <div>
-                            <div>
+                            <div className={`${styles.actorsBlock} ${styles.content}`}>
                                 {data.docs.map(actor => (
                                     <div>
-                                        <img src={actor.photo} alt="" width={100} height={200} />
-                                        <p>{actor.name ? actor.name : actor.enName}</p>
-                                        <p>{actor.age}</p>
+                                        <div className={styles.photo}>
+                                            <img src={actor.photo ? actor.photo : noPhoto} alt=""/>
+                                        </div>
+
+                                        <p>{actor.name ? actor.name : actor.enName}{actor.age && `, ${actor.age}`}</p>
                                     </div>
                                 ))}
                             </div>

@@ -45,6 +45,8 @@ export const Reviews = ({movieId}: {movieId: number}) => {
 
     return (
         <div>
+            <h2 className={styles.h2}>Отзывы</h2>
+
             {isLoading && <div>Loading...</div>}
 
             {isSuccess && data && (

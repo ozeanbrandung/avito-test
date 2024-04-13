@@ -5,6 +5,7 @@ import {Actors} from "@/modules/Actors";
 import {Seasons} from "@/modules/Seasons";
 import styles from "./Film.module.scss";
 import {Button} from "@/ui";
+import {IPoster, PostersCarousel} from "@/modules/PostersCarousel/PostersCarousel";
 
 export interface IFilm {
     id: number;
@@ -22,13 +23,7 @@ export interface IFilm {
     poster: {
         url: string;
     }
-    similarMovies: {
-        id: number;
-        name: string;
-        poster: {
-            url: string;
-        }
-    }[]
+    similarMovies: IPoster[]
 }
 
 function fetchFilm(id: string) {
@@ -70,12 +65,12 @@ export default function Film () {
                 <>
                     <Button onClick={handleClickBack}>{backBtnTitle}</Button>
 
-                    <article className={styles.content}>
+                    <article className={styles.article}>
                         <h1 className={styles.title}>{data.name}</h1>
 
                         <div className={styles.description}>
                             <div className={styles.right}>
-                                <p className={styles.block}>
+                                <p className={`${styles.block} ${styles.text}`}>
                                     {data.description}
                                 </p>
 
@@ -106,6 +101,8 @@ export default function Film () {
                     </article>
 
                     <Actors movieId={data.id} />
+
+                    <PostersCarousel posters={data.similarMovies} />
 
                     {data.seasonsInfo.length > 0 && (
                         <Seasons movieId={data.id} />

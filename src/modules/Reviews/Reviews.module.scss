@@ -3,7 +3,7 @@
   padding: 60px 40px;
 
   &:not(:last-child) {
-    margin-bottom: var(--margin-bottom-block)
+    margin-bottom: var(--margin-bottom-s)
   }
 
   &.positive {
@@ -23,6 +23,7 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
+  margin-bottom: 24px;
 }
 
 .author {
@@ -31,9 +32,15 @@
 
 .title {
   font-size: 20px;
+  margin-bottom: 0;
 }
 
 .content {
   max-width: 1000px;
-  margin: 0 auto var(--margin-bottom-block);
+  margin: 0 auto var(--margin-bottom-s);
+}
+
+.h2 {
+  margin-bottom: var(--margin-bottom-m);
+  text-align: center;
 }
