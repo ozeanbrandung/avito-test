@@ -8,4 +8,14 @@
 .content {
   margin: 0 auto var(--margin-bottom-s);
   width: var(--filtersGroupWidth);
+  
+  @media (max-width: 767px) {
+    width: var(--filtersGroupWidth-s);
+  }
+}
+
+.filtersGroup {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }

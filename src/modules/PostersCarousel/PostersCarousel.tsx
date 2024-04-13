@@ -21,7 +21,23 @@ export const PostersCarousel = ({posters}:IProps) => {
       <div>
           <h2 className={styles.title}>Похожие фильмы</h2>
 
-          <Swiper className={styles.swiper} spaceBetween={50} slidesPerView={5} modules={[Navigation]} loop>
+          <Swiper
+              className={styles.swiper}
+              spaceBetween={0}
+              slidesPerView={1}
+              breakpoints={{
+                  768: {
+                      slidesPerView: 3,
+                      spaceBetween: 20,
+                  },
+                  1024: {
+                      slidesPerView: 5,
+                      spaceBetween: 50,
+                  },
+              }}
+              modules={[Navigation]}
+              loop
+          >
               {posters.map(item => (
                   <SwiperSlide className={styles.slide}>
                       <Link to={`/films/${item.id}`}>

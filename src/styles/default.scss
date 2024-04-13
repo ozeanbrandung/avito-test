@@ -1,8 +1,10 @@
 :root {
   --filterWidth: 600px;
+  --filterWidth-s: 250px;
   --filtersColumnGap: 20px;
   --filterSelect: 40px;
   --filtersGroupWidth: calc(var(--filterWidth) + var(--filtersColumnGap) + var(--filterSelect));
+  --filtersGroupWidth-s: calc(var(--filterWidth-s) + var(--filtersColumnGap) + var(--filterSelect));
   --margin-bottom-l: 80px;
   --margin-bottom-m: 60px;
   --margin-bottom-s: 40px;

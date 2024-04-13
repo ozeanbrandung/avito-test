@@ -1,3 +1,8 @@
 .input {
   width: var(--filterWidth);
+
+  @media (max-width: 767px) {
+    width: var(--filterWidth-s);
+    flex: 0 0 var(--filterWidth-s);
+  }
 }
