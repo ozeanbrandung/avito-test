@@ -3,6 +3,7 @@ import {useQuery} from '@tanstack/react-query';
 import {Reviews} from "@/modules/Reviews";
 import {Actors} from "@/modules/Actors";
 import {Seasons} from "@/modules/Seasons";
+import styles from "@/pages/Films/Films.module.scss";
 
 export interface IFilm {
     id: number;
@@ -31,7 +32,7 @@ export default function Film () {
     const {filmId} = useParams();
 
     //@ts-ignore
-    const {data, isSuccess, isLoading, error} = useQuery<IFilm, string>(
+    const {data, isSuccess, isLoading, error} = useQuery<IFilm, Error>(
         {
             queryKey: ['film', filmId],
             queryFn: () => fetchFilm(filmId)
@@ -40,7 +41,10 @@ export default function Film () {
 
     return (
         <section>
-            {isLoading && <div>Loading...</div>}
+            {isLoading && <div className={styles.content}>Loading...</div>}
+
+            {error && <div className={styles.content}>{error.message}</div>}
+
             {isSuccess && data && (
                 <>
                     <Link to={'/films'}>К поиску</Link>

@@ -19,7 +19,10 @@ export enum LimitOptions {
     Fifty = '50',
 }
 
-function fetchFilms(query:string, page: number, limit:LimitOptions | string): Promise<IData> {
+const DEFAULT_PAGE = '1';
+const DEFAULT_LIMIT = LimitOptions.Ten
+
+function fetchFilms(query:string, page: string, limit:LimitOptions | string): Promise<IData> {
     let url = `https://api.kinopoisk.dev/v1.4/movie/search?page=${page}&limit=${limit}`;
 
     if (query) {
@@ -36,51 +39,38 @@ function fetchFilms(query:string, page: number, limit:LimitOptions | string): Pr
 export default function Films () {
     const [isInit, setIsInit] = useState(true);
 
-    /* */
     const [searchParams, setSearchParams] = useSearchParams();
 
-    const pageFromUrl = Number(searchParams.get('page'));
-    /* */
-
-    /* pagination */
-    const handlePageClick = useCallback((pageNum: number) => () => {
-        setSearchParams(prev => {
-            const newUrl = new URLSearchParams();
-
-            newUrl.set('page', pageNum.toString());
-
-            prev.forEach((value, key) => {
-                if (key !== 'page') {
-                    newUrl.set(key, value);
-                }
-            })
-
-            return newUrl;
-        })
-    }, [])
-    /* end pagination */
-
     /* search */
-    const [value, setValue] = useState(searchParams.has('query') ? searchParams.get('query') : '');
+    const [query, setQuery] = useState(searchParams.has('query') ? searchParams.get('query') : '');
 
-    const debouncedValue = useDebounce(value, 1000);
+    const debouncedQuery = useDebounce(query, 1000);
 
-    //resets page on search value change and doesn't reset on first page load
+    /* value for input that is not debounced */
+    const handleChangeQuery = useCallback(
+        (e:ChangeEvent<HTMLInputElement>) => setQuery(e.target.value), []
+    );
+    /* end search  */
+
+    //manage url on query change
     useEffect(() => {
         if (!isInit) {
             setSearchParams((prev) => {
                 const newUrl = new URLSearchParams();
 
+                //reset page at url
                 if (prev.has('page')) {
-                    newUrl.set('page', '1');
+                    newUrl.set('page', DEFAULT_PAGE);
                 }
 
-                if (debouncedValue) {
-                    newUrl.set('query', debouncedValue);
-                }
-
+                //preserve limit at url
                 if (prev.has('limit')) {
                     newUrl.set('limit', prev.get('limit'))
+                }
+
+                //set new query at url
+                if (debouncedQuery) {
+                    newUrl.set('query', debouncedQuery);
                 }
 
                 return newUrl;
@@ -88,42 +78,73 @@ export default function Films () {
         } else {
             setIsInit(false)
         }
-    }, [debouncedValue])
-    /* end search */
+    }, [debouncedQuery])
 
-    /* limit */
-    const [limit, setLimit] = useState(searchParams.has('limit') ? searchParams.get('limit') : LimitOptions.Ten);
-
-    const handleChangeLimit = useCallback((newLimit: LimitOptions) => (e: MouseEvent) => {
-        setLimit(newLimit)
-        setSearchParams((prev) => {
+    //set url initially
+    useEffect(() => {
+        setSearchParams(prev => {
             const newUrl = new URLSearchParams();
 
-            prev.forEach((value, key) => {
-                newUrl.set(key, value)
-            })
+            //see if url contains page - preserve, otherwise set default
+            newUrl.set('page', prev.has('page') ? prev.get('page') : DEFAULT_PAGE);
 
-            newUrl.set('limit', newLimit.toString())
+            //see if url contains limit - preserve, otherwise set default
+            newUrl.set('limit', prev.has('limit') ? prev.get('limit') : DEFAULT_LIMIT);
 
-            return newUrl
+            //preserve query - don't need to set default
+            if (prev.has('query')) {
+                newUrl.set('query', prev.get('query'));
+            }
+            return newUrl;
         })
     }, [])
+
+    /* pagination */
+    const handlePageClick = useCallback((pageNum: number) => () => {
+        //update page at url
+        setSearchParams(prev => {
+            const newUrl = new URLSearchParams();
+            //set page
+            newUrl.set('page', pageNum.toString());
+            //preserve limit
+            newUrl.set('limit', prev.get('limit'));
+            //preserve query
+            if (prev.has('query')) {
+                newUrl.set('query', prev.get('query'));
+            }
+            return newUrl;
+        })
+    }, [searchParams.get('limit'), searchParams.get('query')])
+    /* end pagination */
+
+    /* limit */
+    const handleChangeLimit = useCallback((newLimit: LimitOptions) => (e: MouseEvent) => {
+        //update limit at url and reset page at url
+        setSearchParams(prev => {
+            const newUrl = new URLSearchParams();
+            //reset page
+            newUrl.set('page', DEFAULT_PAGE);
+            //new limit
+            newUrl.set('limit', newLimit);
+            //preserve query
+            if (prev.has('query')) {
+                newUrl.set('query', prev.get('query'));
+            }
+            return newUrl;
+        })
+    }, [searchParams.get('query')])
     /* end limit*/
 
     //@ts-ignore
-    const {data, isLoading, isSuccess, error} = useQuery<IData, string>(
+    const {data, isLoading, isSuccess, error} = useQuery<IData, Error>(
         {
-            queryKey: ['films', debouncedValue, pageFromUrl, limit],
+            queryKey: ['films', debouncedQuery, searchParams.get('page'), searchParams.get('limit')],
             queryFn: () => fetchFilms(
-                debouncedValue,
-                pageFromUrl > 0 ? pageFromUrl : 1,
-                limit
+                debouncedQuery,
+                searchParams.get('page'),
+                searchParams.get('limit')
             )
         }
-    );
-
-    const handleChange = useCallback(
-        (e:ChangeEvent<HTMLInputElement>) => setValue(e.target.value), []
     );
 
     return (
@@ -131,22 +152,24 @@ export default function Films () {
             <h1 className={styles.title}>Искать фильмы!</h1>
 
             <div className={styles.filtersGroup}>
-                <Search value={value} handleChange={handleChange} />
+                <Search value={query} handleChange={handleChangeQuery} />
 
                 <select>
-                    <option selected={limit === LimitOptions.Ten} onClick={handleChangeLimit(LimitOptions.Ten)}>
+                    <option selected={searchParams.get('limit') === LimitOptions.Ten} onClick={handleChangeLimit(LimitOptions.Ten)}>
                         {LimitOptions.Ten}
                     </option>
-                    <option selected={limit === LimitOptions.Twenty} onClick={handleChangeLimit(LimitOptions.Twenty)}>
+                    <option selected={searchParams.get('limit') === LimitOptions.Twenty} onClick={handleChangeLimit(LimitOptions.Twenty)}>
                         {LimitOptions.Twenty}
                     </option>
-                    <option selected={limit === LimitOptions.Fifty} onClick={handleChangeLimit(LimitOptions.Fifty)}>
+                    <option selected={searchParams.get('limit') === LimitOptions.Fifty} onClick={handleChangeLimit(LimitOptions.Fifty)}>
                         {LimitOptions.Fifty}
                     </option>
                 </select>
             </div>
 
             {isLoading && <div className={styles.content}>Loading...</div>}
+
+            {error && <div className={styles.content}>{error.message}</div>}
 
             {isSuccess && data && (
                 <>
