@@ -11,6 +11,7 @@ interface IData {
 }
 
 interface IReview {
+    id:number;
     title: string;
     review: string;
     author: string;
@@ -56,6 +57,7 @@ export const Reviews = ({movieId}: {movieId: number}) => {
                         <div className={styles.content}>
                             {data.docs.map(review => (
                                     <article
+                                        key={review.id}
                                         className={`
                                             ${styles.review}
                                             ${review.type === 'Позитивный' ? styles.positive : ''}

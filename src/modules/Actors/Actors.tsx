@@ -12,6 +12,7 @@ interface IData {
 }
 
 interface IActor {
+    id:number;
     name: string;
     photo: string;
     age: number;
@@ -58,7 +59,7 @@ export const Actors = ({movieId}: {movieId: number}) => {
                         <div>
                             <div className={`${styles.actorsBlock} ${styles.content}`}>
                                 {data.docs.map(actor => (
-                                    <div>
+                                    <div key={actor.id}>
                                         <div className={styles.photo}>
                                             <img src={actor.photo ? actor.photo : noPhoto} alt=""/>
                                         </div>

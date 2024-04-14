@@ -1,11 +1,11 @@
-import {Link, useNavigate, useParams} from "react-router-dom";
+import {useParams} from "react-router-dom";
 import {useQuery} from '@tanstack/react-query';
 import {Reviews} from "@/modules/Reviews";
 import {Actors} from "@/modules/Actors";
 import {Seasons} from "@/modules/Seasons";
 import styles from "./Film.module.scss";
 import {Button} from "@/ui";
-import {IPoster, PostersCarousel} from "@/modules/PostersCarousel/PostersCarousel";
+import {IPoster, PostersCarousel} from "@/modules/PostersCarousel";
 
 export interface IFilm {
     id: number;
@@ -104,7 +104,7 @@ export default function Film () {
 
                     <PostersCarousel posters={data.similarMovies} />
 
-                    {data.seasonsInfo.length > 0 && (
+                    {data.seasonsInfo?.length > 0 && (
                         <Seasons movieId={data.id} />
                     )}
 

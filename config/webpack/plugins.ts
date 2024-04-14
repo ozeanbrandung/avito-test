@@ -1,5 +1,6 @@
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import MiniCssExtractPlugin from "mini-css-extract-plugin";
+import dotenv from 'dotenv'
 //import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
 import webpack, {Configuration} from "webpack";
 import {BuildOptions} from "./types";
@@ -15,6 +16,7 @@ export default ({mode, paths}: BuildOptions):Configuration['plugins'] => {
             favicon: path.resolve(paths.public, 'favicon.ico')
         }),
         new webpack.DefinePlugin({
+            'process.env': JSON.stringify(dotenv.config({ path: paths.env }).parsed),
             'process.env.TOKEN': JSON.stringify(process.env.TOKEN)
         })
     ];

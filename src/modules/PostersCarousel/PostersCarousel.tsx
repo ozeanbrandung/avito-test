@@ -18,36 +18,39 @@ interface IProps {
 
 export const PostersCarousel = ({posters}:IProps) => {
   return (
-      <div>
+      <div className={styles.block}>
           <h2 className={styles.title}>Похожие фильмы</h2>
 
-          <Swiper
-              className={styles.swiper}
-              spaceBetween={0}
-              slidesPerView={1}
-              breakpoints={{
-                  768: {
-                      slidesPerView: 3,
-                      spaceBetween: 20,
-                  },
-                  1024: {
-                      slidesPerView: 5,
-                      spaceBetween: 50,
-                  },
-              }}
-              modules={[Navigation]}
-              loop
-          >
-              {posters.map(item => (
-                  <SwiperSlide className={styles.slide}>
-                      <Link to={`/films/${item.id}`}>
-                          <div className={styles.poster}>
-                              <img src={item.poster.url} alt={''}/>
-                          </div>
-                      </Link>
-                  </SwiperSlide>
-              ))}
-          </Swiper>
+          {posters.length > 0 ? (
+              <Swiper
+                  spaceBetween={0}
+                  slidesPerView={1}
+                  breakpoints={{
+                      768: {
+                          slidesPerView: 3,
+                          spaceBetween: 20,
+                      },
+                      1024: {
+                          slidesPerView: 5,
+                          spaceBetween: 50,
+                      },
+                  }}
+                  modules={[Navigation]}
+                  loop
+              >
+                  {posters.map(item => (
+                      <SwiperSlide key={item.id} className={styles.slide}>
+                          <Link to={`/films/${item.id}`}>
+                              <div className={styles.poster}>
+                                  <img src={item.poster.url} alt='' />
+                              </div>
+                          </Link>
+                      </SwiperSlide>
+                  ))}
+              </Swiper>
+          ) : (
+              <div>Нет похожих фильмов</div>
+          )}
       </div>
   )
 }

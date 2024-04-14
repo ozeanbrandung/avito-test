@@ -1,6 +1,8 @@
+import {MouseEvent} from "react";
 import {Pagination} from "@/modules/Pagination";
 import {useQuery} from "@tanstack/react-query";
 import {useCallback, useState} from "react";
+import styles from './Seasons.module.scss';
 
 //TODO: make it dynamic
 interface IData {
@@ -36,7 +38,7 @@ export const Seasons = ({movieId}: {movieId: number}) => {
     const [page, setPage] = useState(1);
 
     //@ts-ignore
-    const {data, isLoading, isSuccess, error} = useQuery<IData, string>(
+    const {data, isLoading, isSuccess, error} = useQuery<IData, Error>(
         {
             queryKey: ['seasons', page],
             queryFn: () => fetchSeasons(page, movieId)
@@ -49,34 +51,41 @@ export const Seasons = ({movieId}: {movieId: number}) => {
     )
 
     return (
-        <div>
+        <div className={styles.seasons}>
             {isLoading && <div>Loading...</div>}
+
+            {error && <div>{error.message}</div>}
 
             {isSuccess && data && (
                 <>
                     {data.docs?.length > 0 ? (
-                        <div>
-                            <div>
+                        <>
+                            <ul className={styles.content}>
                                 {data.docs.map(season => (
-                                    <div>
-                                        <p>{season.number}</p>
-                                        <p>{season.name}</p>
-                                        <p>{season.description}</p>
-                                        <div>
+                                    <li key={season.number} className={styles.season}>
+                                        <p className={styles.title} onClick={(e:MouseEvent) => {
+                                            (e.currentTarget as HTMLElement).classList.toggle(styles.active)
+                                        }}>
+                                            <strong>{season.name} ↓</strong>
+                                        </p>
+
+                                        <ul className={styles.episodes}>
                                             {season.episodes.map(item => (
-                                                <span>{item.number} - {item.name}</span>
+                                                <li key={item.number} className={styles.episode}>
+                                                    {item.number}. {item.name}
+                                                </li>
                                             ))}
-                                        </div>
-                                    </div>
+                                        </ul>
+                                    </li>
                                 ))}
-                            </div>
+                            </ul>
 
                             <Pagination
                                 total={data.pages}
                                 current={data.page}
                                 handleClick={handlePageClick}
                             />
-                        </div>
+                        </>
                     ) : (
                         <div>Нет информации о сезонах</div>
                     )}
