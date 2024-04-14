@@ -1,0 +1,63 @@
+.seasons {
+  margin-bottom: var(--margin-bottom-l);
+}
+
+.content {
+  margin-bottom: var(--margin-bottom-s);
+}
+
+.title {
+
+}
+
+.season {
+  position: relative;
+  cursor: pointer;
+  width: fit-content;
+
+  .title {
+    transition: text-decoration 0.3s ease;
+  }
+
+  &:hover {
+    .title {
+      text-decoration: underline;
+    }
+
+    .episodes {
+      height: 500px;
+      opacity: 1;
+      margin-top: 0;
+    }
+  }
+}
+
+.episodes {
+  width: 500px;
+  height: 0;
+  opacity: 0;
+  overflow-y: auto;
+  background-color: ghostwhite;
+  border-radius: 30px;
+  z-index: 10;
+  margin-top: -1.5em;
+  padding: 20px;
+
+  transition: height 0.3s ease, opacity 0.3s ease, margin-top 0.3s ease;
+  will-change: height, margin-top;
+
+  @media (max-width: 767px) {
+    width: 300px;
+    left: 0;
+  }
+}
+
+.episode {
+  list-style: none;
+}
+
+.title.active + .episodes  {
+  height: 500px;
+  opacity: 1;
+  margin-top: 0;
+}
